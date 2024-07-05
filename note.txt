@@ -1,3 +1,5 @@
 # With hand_gesture_recognition project, there is some file and that use:
 
 Link data: https://drive.google.com/file/d/1rHI2SER0I9cb6QPbgWVfWDZtNhQCgl7b/view?usp=sharing
+
+Link git https://github.com/thatlq1812/hand_gesture

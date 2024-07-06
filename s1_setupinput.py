@@ -57,14 +57,11 @@ class Data_Saver:
         with open(csv_file, mode='a', newline='') as file:
             writer = csv.writer(file)
             
-            for i, box in enumerate(boxes):
-                # Count number of hands
-                num_hands = len(boxes)
-                
-                # Save data to CSV file
-                writer.writerow([image_path, num_hands, i + 1] + list(box))
-
-
+            num_hands = len(boxes)
+            data = [image_path, num_hands]
+            for box in boxes:
+                data.extend(box)
+            writer.writerow(data)
 
 # Use the code below to test the HandDetector class
 if __name__ == "__main__":
@@ -79,8 +76,16 @@ if __name__ == "__main__":
 
     # Information of saving data
     image_folder = 'data/images/'
-    csv_file = 'data/data_info.csv'
+    csv_file = 'data/info.csv'
     saving = False
+
+    # Create folder and csv file if not exist
+    if not os.path.exists(image_folder):
+        os.makedirs(image_folder)
+    if not os.path.exists(csv_file):
+        with open(csv_file, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['image_path', 'num_hands', '1_x_1', '1_y_1', '1_x_2', '1_y_2', '2_x_1', '2_y_1', '2_x_2', '2_y_2'])
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -92,7 +97,7 @@ if __name__ == "__main__":
         box = detector.detect_hands(frame)
         if saving:
             try:
-                data_saver.save_data(frame, box, image_folder + f'image_{len(os.listdir(image_folder)) + 1}.jpg', csv_file)
+                data_saver.save_data(frame, box, image_folder + f'img_{len(os.listdir(image_folder)) + 1}.jpg', csv_file)
                 print(f'Saved image_{len(os.listdir(image_folder)) + 1}.jpg')
             except:
                 pass

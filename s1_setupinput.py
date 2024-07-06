@@ -93,13 +93,13 @@ if __name__ == "__main__":
         if saving:
             try:
                 data_saver.save_data(frame, box, image_folder + f'image_{len(os.listdir(image_folder)) + 1}.jpg', csv_file)
-                print(f'Đã lưu image_{len(os.listdir(image_folder)) + 1}.jpg')
+                print(f'Saved image_{len(os.listdir(image_folder)) + 1}.jpg')
             except:
                 pass
 
         if cv2.waitKey(1) & 0xFF == ord('s'):
             saving = not saving
-            print('Đã bắt đầu lưu dữ liệu' if saving else 'Đã kết thúc lưu dữ liệu')
+            print('Started saving images' if saving else 'Ended saving images')
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

@@ -53,16 +53,17 @@ class Data_Saver:
         # Save image
         cv2.imwrite(image_path, image)
         
-        # Count number of hands
-        num_hands = len(boxes) 
-
         # Save data to CSV file
         with open(csv_file, mode='a', newline='') as file:
             writer = csv.writer(file)
             
-            for box in boxes:
+            for i, box in enumerate(boxes):
+                # Count number of hands
+                num_hands = len(boxes)
+                
                 # Save data to CSV file
-                writer.writerow([image_path, num_hands] + list(box))
+                writer.writerow([image_path, num_hands, i + 1] + list(box))
+
 
 
 # Use the code below to test the HandDetector class
@@ -79,6 +80,7 @@ if __name__ == "__main__":
     # Information of saving data
     image_folder = 'data/images/'
     csv_file = 'data/data_info.csv'
+    saving = False
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -86,12 +88,15 @@ if __name__ == "__main__":
             break
 
         box = detector.detect_hands(frame)
+        if saving:
+            try:
+                data_saver.save_data(frame, box, image_folder + f'image_{len(os.listdir(image_folder)) + 1}.jpg', csv_file)
+                print(f'Đã lưu image_{len(os.listdir(image_folder)) + 1}.jpg')
+            except:
+                pass
 
-        try:
-            data_saver.save_data(frame, box, image_folder + f'image_{len(os.listdir(image_folder)) + 1}.jpg', csv_file)
-            print(f'Lưu ảnh và thông tin vào {image_folder} và {csv_file}')
-        except:
-            pass
+        if keyboard.is_pressed('s'):
+            saving = not saving
 
         if keyboard.is_pressed('q'):
             break

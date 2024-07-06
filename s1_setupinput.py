@@ -50,25 +50,25 @@ class Data_Saver:
         self.data = []
     
     def save_data(self, image, boxes, image_path, csv_file):
-
-        # Lưu ảnh
+        # Save image
         cv2.imwrite(image_path, image)
         
-        # Đếm số lượng tay
+        # Count number of hands
         num_hands = len(boxes) 
 
-        # Lưu thông tin vào file CSV
+        # Save data to CSV file
         with open(csv_file, mode='a', newline='') as file:
             writer = csv.writer(file)
             
             for box in boxes:
-                # Ghi thông tin của mỗi tay vào file CSV
+                # Save data to CSV file
                 writer.writerow([image_path, num_hands] + list(box))
 
 
-# Sử dụng lớp HandDetector để phát hiện bàn tay trong camera
+# Use the code below to test the HandDetector class
 if __name__ == "__main__":
     detector = HandDetector()
+    data_saver = Data_Saver()
     cap = cv2.VideoCapture(0)
     # Setup camere size
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 720)
@@ -87,9 +87,8 @@ if __name__ == "__main__":
 
         box = detector.detect_hands(frame)
 
-        # Hiển thị ảnh đã được chú thích box 1 and box 2
         try:
-            detector.save_data(frame, box, image_folder + f'image_{len(os.listdir(image_folder)) + 1}.jpg', csv_file)
+            data_saver.save_data(frame, box, image_folder + f'image_{len(os.listdir(image_folder)) + 1}.jpg', csv_file)
             print(f'Lưu ảnh và thông tin vào {image_folder} và {csv_file}')
         except:
             pass

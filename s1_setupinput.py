@@ -87,6 +87,8 @@ if __name__ == "__main__":
         if not ret:
             break
 
+        cv2.imshow('frame', frame)
+
         box = detector.detect_hands(frame)
         if saving:
             try:
@@ -95,10 +97,12 @@ if __name__ == "__main__":
             except:
                 pass
 
-        if keyboard.is_pressed('s'):
+        if cv2.waitKey(1) & 0xFF == ord('s'):
             saving = not saving
+            print('Đã bắt đầu lưu dữ liệu' if saving else 'Đã kết thúc lưu dữ liệu')
 
-        if keyboard.is_pressed('q'):
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             break
         
     cap.release()
+    cv2.destroyAllWindows()

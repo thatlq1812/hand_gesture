@@ -37,14 +37,13 @@ class Region_Detection: # Detection class
         # Find the contours in the image
         contours, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        # If contours are found, find the largest one (hand region)
+        # If contours are found, draw a rectangle around the hand region of first 10 contours
         if contours:
-            contour = max(contours, key=cv2.contourArea)
-            x, y, w, h = cv2.boundingRect(contour)
-            # Show the image
-            return x, y, w, h
-        else:
-            return None
+            for i in range(min(10, len(contours))):
+                x, y, w, h = cv2.boundingRect(contours[i])
+                if w > 50 and h > 50:
+                    return x, y, w, h
+        return None
             
     def draw_rectangle(self,img):
         # Call the detect_hand_region method to get the bounding box

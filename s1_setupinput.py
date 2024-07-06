@@ -1,5 +1,8 @@
 import cv2
+import os
 import mediapipe as mp
+import keyboard
+import csv
 
 class HandDetector:
     def __init__(self):
@@ -38,9 +41,30 @@ class HandDetector:
                 x_max = min(image.shape[1], x_max + 20)
                 y_max = min(image.shape[0], y_max + 20)
 
-                # boxes.append((x_min, y_min, x_max, y_max))
+                boxes.append((x_min, y_min, x_max, y_max))
         
         return boxes
+
+class Data_Saver:
+    def __init__(self):
+        self.data = []
+    
+    def save_data(self, image, boxes, image_path, csv_file):
+
+        # Lưu ảnh
+        cv2.imwrite(image_path, image)
+        
+        # Đếm số lượng tay
+        num_hands = len(boxes) 
+
+        # Lưu thông tin vào file CSV
+        with open(csv_file, mode='a', newline='') as file:
+            writer = csv.writer(file)
+            
+            for box in boxes:
+                # Ghi thông tin của mỗi tay vào file CSV
+                writer.writerow([image_path, num_hands] + list(box))
+
 
 # Sử dụng lớp HandDetector để phát hiện bàn tay trong camera
 if __name__ == "__main__":
@@ -49,12 +73,13 @@ if __name__ == "__main__":
     # Setup camere size
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 720)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-    cap.set(cv2.CAP_PROP_FPS, 30)
+    cap.set(cv2.CAP_PROP_FPS, 10)
     cap.set(cv2.CAP_PROP_AUTOFOCUS, 0)
 
-    # Or setup one jpg image for testing
-    img = cv2.imread('test.jpg')
-    
+    # Information of saving data
+    image_folder = 'data/images/'
+    csv_file = 'data/data_info.csv'
+
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
@@ -64,12 +89,13 @@ if __name__ == "__main__":
 
         # Hiển thị ảnh đã được chú thích box 1 and box 2
         try:
-            print(box[0],'/n',box[1])
+            detector.save_data(frame, box, image_folder + f'image_{len(os.listdir(image_folder)) + 1}.jpg', csv_file)
+            print(f'Lưu ảnh và thông tin vào {image_folder} và {csv_file}')
         except:
             pass
-        if cv2.waitKey(1) & 0xFF == 27:
+
+        if keyboard.is_pressed('q'):
             break
-
-
+        
     cap.release()
     cv2.destroyAllWindows()

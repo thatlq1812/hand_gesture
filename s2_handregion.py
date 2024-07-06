@@ -55,8 +55,6 @@ class Hand_Region:
         
         # Use Gaussian blur to decrease the noise in the image
         image = cv2.GaussianBlur(image, (3, 3), 0)
-        # Use Canny edge detection to detect the edges in the image
-        image = cv2.Canny(image, 50, 100)
 
         # Use mathematical dilation to make the edges more visible
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
@@ -81,7 +79,7 @@ class Hand_Region:
                                            cells_per_block=(3, 3),
                                            block_norm='L1',
                                            visualize=True,
-                                           feature_vector=True)
+                                           feature_vector=False)
         return hogFeature, hogImage
     def sliding_window(self,image, base_score, stepSize, windowSize, pixel_per_cell=8):
         """ A sliding window that checks each different location in the image,
@@ -210,11 +208,12 @@ if __name__ == '__main__':
     # Load the image
     img = cv2.imread('test.jpg', cv2.IMREAD_GRAYSCALE)
 
-    # Get the hand region in the image
-    get_image = hand_region.preprocess_image(img)
+    # Use hog and sliding window to show the different regions
+    hogFeature, hogImage = hand_region.hog_feature(img)
+    # max_score, maxr, maxc, response_map = hand_region.sliding_window(img, hogFeature, 8, (64, 128))
 
-    # Show the image
-    cv2.imshow('Image', get_image)
+    # SShow hog image
+    cv2.imshow('HOG Image', hogImage)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 

@@ -33,5 +33,3 @@ if max_folder:
 else:
     data_path = os.path.join(data_path, max_folder)
     os.makedirs(data_path)
-
-

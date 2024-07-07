@@ -1,5 +1,6 @@
 import cv2
 import os
+import getpass
 import mediapipe as mp
 import csv
 import warnings
@@ -150,7 +151,9 @@ class HandProcessor:
 
 if __name__ == "__main__":
     # Data information
-    capture_person = 'thatlq'
+    # Get PC username
+    username = getpass.getuser()
+    capture_person = username
     image_folder = 'data/images/'
     csv_file = 'data/info.csv'
 

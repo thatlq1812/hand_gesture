@@ -3,30 +3,25 @@ import os
 import mediapipe as mp
 import csv
 
-class Hand_Detector:
+class HandDetector:
     def __init__(self):
         self.mp_hands = mp.solutions.hands
         self.hands = self.mp_hands.Hands(static_image_mode=True, max_num_hands=2, min_detection_confidence=0.5)
         self.mp_drawing = mp.solutions.drawing_utils
 
     def detect_hands(self, image):
-        # Read image
         if image is None:
             raise ValueError("Cannot read image")
-        
-        # Convert image to RGB
-        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-        # Process image
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         results = self.hands.process(image_rgb)
         boxes = []
-        # Draw landmarks on image
+
         if results.multi_hand_landmarks:
             for hand_landmarks in results.multi_hand_landmarks:
                 x_min, y_min = float('inf'), float('inf')
                 x_max, y_max = float('-inf'), float('-inf')
 
-                # Find bounding box of hand
                 for landmark in hand_landmarks.landmark:
                     x, y = int(landmark.x * image.shape[1]), int(landmark.y * image.shape[0])
                     x_min = min(x_min, x)
@@ -34,7 +29,6 @@ class Hand_Detector:
                     x_max = max(x_max, x)
                     y_max = max(y_max, y)
                     
-                # Expand bounding box
                 x_min = int(max(0, x_min - 20))
                 y_min = int(max(0, y_min - 20))
                 x_max = int(min(image.shape[1], x_max + 20))
@@ -44,19 +38,25 @@ class Hand_Detector:
         
         return boxes
 
-class Data_Saver:
-    def __init__(self):
-        self.data = []
-    
-    def save_data(self, image, boxes, image_path, csv_file):
-        # Save image
+class DataSaver:
+    def __init__(self, image_folder, csv_file):
+        self.image_folder = image_folder
+        self.csv_file = csv_file
+
+        if not os.path.exists(self.image_folder):
+            os.makedirs(self.image_folder)
+
+        if not os.path.exists(self.csv_file):
+            with open(self.csv_file, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(['image_path', 'num_hands', '1_x_1', '1_y_1', '1_x_2', '1_y_2', '2_x_1', '2_y_1', '2_x_2', '2_y_2'])
+
+    def save_data(self, image, boxes, capture_person):
+        image_path = os.path.join(self.image_folder, f'{capture_person}_img_{len(os.listdir(self.image_folder)) + 1}.jpg')
         cv2.imwrite(image_path, image)
         
-        # Count number of hands
         num_hands = len(boxes)
-        
-        # Save data to CSV file
-        with open(csv_file, mode='a', newline='') as file:
+        with open(self.csv_file, mode='a', newline='') as file:
             writer = csv.writer(file)
             
             data = [image_path, num_hands]
@@ -65,53 +65,84 @@ class Data_Saver:
 
             writer.writerow(data)
 
-# Use the code below to test the HandDetector class
-if __name__ == "__main__":
-    detector = Hand_Detector()
-    saver = Data_Saver()
-    cap = cv2.VideoCapture(0)
-    # Setup camera size
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-    cap.set(cv2.CAP_PROP_FPS, 10)
-    cap.set(cv2.CAP_PROP_AUTOFOCUS, 0)
+class HandProcessor:
+    def __init__(self, image_folder, csv_file):
+        self.detector = HandDetector()
+        self.saver = DataSaver(image_folder, csv_file)
 
-    # Information of saving data
+    def process_video(self, video_path, capture_person):
+        cap = cv2.VideoCapture(video_path)
+        if not cap.isOpened():
+            print(f"Could not open video file: {video_path}")
+            return
+
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            boxes = self.detector.detect_hands(frame)
+            try:
+                self.saver.save_data(frame, boxes, capture_person)
+                print(f'Saved {capture_person}_img_{len(os.listdir(self.saver.image_folder))}.jpg')
+            except Exception as e:
+                print(f"Error saving data: {str(e)}")
+
+            cv2.imshow('Frame', frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+        cap.release()
+        cv2.destroyAllWindows()
+
+    def process_camera(self, capture_person, cam_index, frame_width, frame_height, frame_rate):
+        cap = cv2.VideoCapture(cam_index)
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, frame_width)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, frame_height)
+        cap.set(cv2.CAP_PROP_FPS, frame_rate)
+
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                break
+            
+            cv2.imshow('Frame', frame)
+            
+            if cv2.waitKey(1) & 0xFF == ord('s'):
+                frame = cv2.resize(frame, (256, 144))
+                boxes = self.detector.detect_hands(frame)
+                try:
+                    self.saver.save_data(frame, boxes, capture_person)
+                    print(f'Saved {capture_person}_img_{len(os.listdir(self.saver.image_folder)) + 1}.jpg')
+                except Exception as e:
+                    print(f"Error saving data: {str(e)}")
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+        cap.release()
+        cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    # Data information
     capture_person = 'thatlq'
     image_folder = 'data/images/'
     csv_file = 'data/info.csv'
-    saving = False
 
-    # Create folder and csv file if not exist
-    if not os.path.exists(image_folder):
-        os.makedirs(image_folder)
-    if not os.path.exists(csv_file):
-        with open(csv_file, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(['image_path', 'num_hands', '1_x_1', '1_y_1', '1_x_2', '1_y_2', '2_x_1', '2_y_1', '2_x_2', '2_y_2'])
+    # Camera settings
+    cam_index = 0
+    frame_width = 1280
+    frame_height = 720
+    frame_rate = 10
 
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            break
-        
-        cv2.imshow('Frame', frame)
-        
-        if saving:
-            frame = cv2.resize(frame, (256, 144))
-            box = detector.detect_hands(frame)
-            try:
-                saver.save_data(frame, box, image_folder + f'{capture_person}_img_{len(os.listdir(image_folder)) + 1}.jpg', csv_file)
-                print(f'Saved {capture_person}_img_{len(os.listdir(image_folder)) + 1}.jpg')
-            except:
-                pass
+    # Video setting
+    video_path = 'data/video.mp4'
 
-        if cv2.waitKey(1) & 0xFF == ord('s'):
-            saving = not saving
-            print('Started saving images' if saving else 'Ended saving images')
+    # Process data
+    hand_processor = HandProcessor(image_folder, csv_file)
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+    # Camera processing
+    hand_processor.process_camera(capture_person, cam_index, frame_width, frame_height, frame_rate)
 
-    cap.release()
-    cv2.destroyAllWindows()
+    # Or process video
+    # hand_processor.process_video(video_path, capture_person)

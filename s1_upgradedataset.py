@@ -2,6 +2,9 @@ import cv2
 import os
 import mediapipe as mp
 import csv
+import warnings
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 class HandDetector:
     def __init__(self):
@@ -42,6 +45,28 @@ class DataSaver:
     def __init__(self, image_folder, csv_file):
         self.image_folder = image_folder
         self.csv_file = csv_file
+
+        # Create image folder if it does not exist
+        if not os.path.exists(self.image_folder):
+            try:
+                os.makedirs(self.image_folder)
+            except OSError as e:
+                print(f"Error creating image folder: {str(e)}")
+                raise
+
+        # Create CSV file if it does not exist
+        if not os.path.exists(self.csv_file):
+            try:
+                with open(self.csv_file, mode='w', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow(['image_path', 'num_hands', '1_x_1', '1_y_1', '1_x_2', '1_y_2', '2_x_1', '2_y_1', '2_x_2', '2_y_2'])
+            except IOError as e:
+                print(f"Error creating CSV file: {str(e)}")
+                raise
+
+        # Notify if creation was successful
+        print(f"Image folder '{self.image_folder}' and CSV file '{self.csv_file}' are ready.")
+
 
         if not os.path.exists(self.image_folder):
             os.makedirs(self.image_folder)

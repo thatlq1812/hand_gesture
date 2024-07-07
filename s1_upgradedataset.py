@@ -126,7 +126,7 @@ class HandProcessor:
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, frame_width)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, frame_height)
         cap.set(cv2.CAP_PROP_FPS, frame_rate)
-
+        saving = False
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
@@ -134,7 +134,7 @@ class HandProcessor:
             
             cv2.imshow('Frame', frame)
             
-            if cv2.waitKey(1) & 0xFF == ord('s'):
+            if saving:
                 frame = cv2.resize(frame, (256, 144))
                 boxes = self.detector.detect_hands(frame)
                 try:
@@ -142,7 +142,9 @@ class HandProcessor:
                     print(f'Saved {capture_person}_img_{len(os.listdir(self.saver.image_folder)) + 1}.jpg')
                 except Exception as e:
                     print(f"Error saving data: {str(e)}")
-
+            if cv2.waitKey(1) & 0xFF == ord('s'):
+                saving = not saving
+            
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 

@@ -156,14 +156,13 @@ if __name__ == "__main__":
     # Get PC username
     username = getpass.getuser()
     capture_person = username
-    image_folder = 'data/images/'
-    csv_file = 'data/info.csv'
-
+    image_folder = 'D:\CODE\hand_gesture\data\Images'
+    csv_file = 'D:\CODE\hand_gesture\data\Info.csv'
     # Camera settings
     cam_index = 0
     frame_width = 1280
     frame_height = 720
-    frame_rate = 10
+    frame_rate = 30
 
     # Video setting
     video_path = 'data/video.mp4'

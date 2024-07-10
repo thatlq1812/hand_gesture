@@ -21,7 +21,7 @@ gl_static_image_mode = False
 gl_max_num_hands = 2
 
 # For Camera
-gl_cam_index = 2
+gl_cam_index = 0
 gl_cam_width = 1280
 gl_cam_height = 720
 gl_cam_fps = 30

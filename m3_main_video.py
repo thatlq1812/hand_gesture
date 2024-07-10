@@ -16,7 +16,7 @@ if __name__ == "__main__":
     data_processor = DataProcessing()
 
     # Read video file
-    video = cv2.VideoCapture('sample4.mp4')
+    video = cv2.VideoCapture('WIN_20240710_21_11_50_Pro.mp4')
 
     # Set the video frame width and height to 1280x720
     video.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)

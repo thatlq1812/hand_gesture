@@ -2,7 +2,7 @@ from m3_module import *
 
 if __name__ == "__main__":
     trainer = RandomForestTrainer(csv_file='m3_info.csv')
-    trainer.preprocess_data(0.3) # Corr < 0.3 will be removed
+    trainer.preprocess_data(0.0) # Corr < 0.0 will be removed
     trainer.split_data(test_size=0.2, random_state=42)
     trainer.create_model(
         ip_n_estimators=200,

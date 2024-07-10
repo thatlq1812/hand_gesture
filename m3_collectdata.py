@@ -1,5 +1,7 @@
 from m3_module import * # Import all class in module
 
+warnings.filterwarnings("ignore") # Ignore warnings
+
 if __name__ == "__main__":
     print("Program started...")
     # Data information
@@ -85,11 +87,11 @@ if __name__ == "__main__":
         cv2.imshow('Processing frame', frame)
 
         # Break the loop if 'q' is pressed
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(10) & 0xFF == ord('q'):
             break
         
         # Save toggle button
-        if cv2.waitKey(1) & 0xFF == ord('s'):
+        if cv2.waitKey(10) & 0xFF == ord('s'):
             save = not save
     
     cv2.destroyAllWindows()

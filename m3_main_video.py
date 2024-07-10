@@ -22,10 +22,6 @@ if __name__ == "__main__":
     video.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
     video.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
-    # Read the drop.txt to get list of features to drop
-    with open('m3_drop.txt', 'r') as file:
-        features_drop_col = file.read().splitlines()
-
     # Read the gesture names from the csv file
     gesturesdf = pd.read_csv('m3_gesture.csv')
     gestures = gesturesdf['name'].values.tolist()
@@ -51,7 +47,7 @@ if __name__ == "__main__":
         # Process the frame and print features
         num_hands = hand_detector.num_detected_hands()  # Get the number of detected hands
         if num_hands > 0:
-            frame = hand_detector.draw_landmarks(frame)  # Draw landmarks on the frame
+            # frame = hand_detector.draw_landmarks(frame)  # Draw landmarks on the frame
             
             # Get landmarks of detected hands
             landmarks_list = hand_detector.get_hand_landmarks()

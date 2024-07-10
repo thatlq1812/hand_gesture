@@ -21,7 +21,7 @@ gl_static_image_mode = False
 gl_max_num_hands = 2
 
 # For Camera
-gl_cam_index = 0
+gl_cam_index = 2
 gl_cam_width = 1280
 gl_cam_height = 720
 gl_cam_fps = 30
@@ -124,7 +124,7 @@ class MediaPipe:
         - image: numpy array, the input image with the bounding box drawn
         """
         min_x, min_y, max_x, max_y = minmax_xy
-        cv2.rectangle(image, (min_x, min_y), (max_x, max_y), (0, 0, 255), 2)
+        cv2.rectangle(image, (min_x, min_y), (max_x, max_y), (255, 255, 0), 1)
         return image
 
 # Class for Camera
@@ -359,22 +359,7 @@ class RandomForestTrainer:
             self.data = self.data.dropna()
         print(self.data['gesture'].nunique())
         print(self.data['person'].nunique())
-        self.data = self.data.drop('person', axis=1)
-        """
-        data_corr = self.data.corr()
-        data_corr_target = data_corr['gesture'].abs()
-        
-        columns_to_drop = data_corr_target[data_corr_target < corr_threshold].index.tolist()
-        
-        # Save the columns numb instead of the name to text file to be used in prediction
-        drop_col_num = [self.all_columns.index(col) for col in columns_to_drop]
-        with open('m3_drop.txt', 'w') as file:
-            for col_num in drop_col_num:
-                file.write(str(col_num) + '\n')
-        
-        # Save the columns to text file to be used in prediction
-        self.data = self.data.drop(columns_to_drop, axis=1)
-        """
+        self.data = self.data.drop('person', axis=1) 
 
     def split_data(self, test_size=0.2, random_state=42):
         X = self.data.drop('gesture', axis=1)

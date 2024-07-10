@@ -4,18 +4,17 @@ warnings.filterwarnings("ignore") # Ignore warnings
 
 if __name__ == "__main__":
     print("Program started...")
-    # Data information
-    # Get PC username
+
+    # Variables
     username = getpass.getuser()
     capture_person = username
     csv_file = 'm3_info.csv'
     gesture_file = 'm3_gesture.csv'
     font = cv2.FONT_HERSHEY_SIMPLEX
-    font_scale = 1 # From 0 to 1
+    font_scale = 1
     text_color_1 = (255, 0, 255)
-    count_down = 0.25 # Set the count down time - seconds
+    count_down = 0.25
     
-
     # Create objects
     hand_detector = MediaPipe(gl_static_image_mode, 1) # Set 1 hand to create dataset
     cam = Camera(gl_cam_index, gl_cam_width, gl_cam_height, gl_cam_fps)
@@ -42,15 +41,17 @@ if __name__ == "__main__":
     sec = int(count_down * gl_cam_fps)
     save = False
     count = 0
-    # Test camera functionality
+
+    # Process
     while True:
+        # Get the frame from the camera
         frame = cam.get_frame()
         if frame is None:
             print("Error: Cannot receive frame.")
             break
         
         # Process frame with MediaPipe
-        hand_detector.process_image(frame) # Process the frame to detect hands
+        hand_detector.process_image(frame)
         
         # Process the frame and print features
         num_hands = hand_detector.num_detected_hands() # Get the number of detected hands
@@ -59,6 +60,7 @@ if __name__ == "__main__":
             landmarks_list = hand_detector.get_hand_landmarks() # Get landmarks of detected hands
             features_list = data_processor.calculate(landmarks_list) # Calculate features
 
+        # Count down for saving the data
         if sec == 0:
             cv2.putText(frame, "Recording...", (10, 30), font, font_scale, text_color_1, 2, cv2.LINE_AA)
             # Save the features to a CSV file
@@ -66,12 +68,11 @@ if __name__ == "__main__":
                 saving.save_data(gesture, capture_person, features_list)
                 count += 1
             sec = int(count_down * gl_cam_fps)
-      
         else:
             cv2.putText(frame, f"Count down: {sec}", (10, 30), font, font_scale, text_color_1, 2, cv2.LINE_AA)
             sec -= 1
 
-        # Put text on the frame
+        # Show information on the frame
         cv2.putText(frame, f"Number of hands: {num_hands}", (10, 60), font, font_scale, text_color_1, 2, cv2.LINE_AA)
         cv2.putText(frame, f"Hold 'q' to quit.", (10, 90), font, font_scale, text_color_1, 2, cv2.LINE_AA)
         cv2.putText(frame, f"Gesture: {gesture}", (10, 120), font, font_scale, text_color_1, 2, cv2.LINE_AA)

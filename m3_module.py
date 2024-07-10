@@ -1,3 +1,6 @@
+# Link for github repository:
+# https://github.com/thatlq1812/hand_gesture
+
 # Import libraries
 import os
 import numpy as np

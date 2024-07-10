@@ -14,7 +14,7 @@ if __name__ == "__main__":
     text_color_1 = (0, 255, 255)
     
     # Create objects
-    hand_detector = MediaPipe(gl_static_image_mode, 10)
+    hand_detector = MediaPipe(gl_static_image_mode, gl_max_num_hands)
     cam = Camera(gl_cam_index, gl_cam_width, gl_cam_height, gl_cam_fps)
     data_processor = DataProcessing()
 
@@ -63,7 +63,7 @@ if __name__ == "__main__":
                 gesture = gestures[int(lmmodel.predict(features))]
                 
                 # Put the number of hands detected on the top left corner of the handbounding box
-                cv2.putText(frame, gesture, (mmxy[0], mmxy[1]-15), font, font_scale, (0,255,0), 2, cv2.LINE_AA)
+                cv2.putText(frame, gesture, (mmxy[0]-20, mmxy[1]-30), font, font_scale, text_color_1, 2, cv2.LINE_AA)
 
         # Put text on the frame for the total number of hands detected
         cv2.putText(frame, f"{num_hands}", (50, 50), font, font_scale, text_color_1, 2, cv2.LINE_AA)
@@ -79,6 +79,7 @@ if __name__ == "__main__":
     cv2.destroyAllWindows()
     # Release the camera
     cam.close_camera()
+    print("Camera released.")
 
 # End of file, print the result
 print("The program has ended...")

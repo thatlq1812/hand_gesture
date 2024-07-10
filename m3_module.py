@@ -127,7 +127,7 @@ class MediaPipe:
         - image: numpy array, the input image with the bounding box drawn
         """
         min_x, min_y, max_x, max_y = minmax_xy
-        cv2.rectangle(image, (min_x, min_y), (max_x, max_y), (255, 255, 0), 1)
+        cv2.rectangle(image, (min_x-20, min_y-20), (max_x+20, max_y+20), (255, 255, 0), 1)
         return image
 
 # Class for Camera

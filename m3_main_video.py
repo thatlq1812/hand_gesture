@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     # Read the gesture names from the csv file
     gesturesdf = pd.read_csv('m3_gesture.csv')
-    gestures = gesturesdf['name'].values.tolist()
+    gestures = gesturesdf['name'].values.tolist()   
     for i in range(len(gestures)):
         print(f"{i}: {gestures[i]}")
 

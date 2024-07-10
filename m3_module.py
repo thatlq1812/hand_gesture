@@ -377,7 +377,7 @@ class RandomForestTrainer:
         
         # Save the columns numb instead of the name to text file to be used in prediction
         drop_col_num = [self.all_columns.index(col) for col in columns_to_drop]
-        with open('Assignment CPV/m3_drop.txt', 'w') as file:
+        with open('m3_drop.txt', 'w') as file:
             for col_num in drop_col_num:
                 file.write(str(col_num) + '\n')
         
@@ -405,7 +405,7 @@ class RandomForestTrainer:
             random_state=ip_random_state
         )
 
-    def train_model(self,save_location='Assignment CPV/m3_rf_model.joblib'):
+    def train_model(self,save_location='m3_rf_model.joblib'):
         self.model.fit(self.X_train, self.y_train)
         model_file = save_location
         dump(self.model, model_file)

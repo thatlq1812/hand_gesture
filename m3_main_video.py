@@ -5,7 +5,7 @@ warnings.filterwarnings("ignore")
 if __name__ == "__main__":
     print("Program started...")
 
-    lmmodel = load("Assignment CPV\m3_model.joblib")
+    lmmodel = load("m3_model.joblib")
 
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_scale = 1 # From 0 to 1
@@ -16,18 +16,18 @@ if __name__ == "__main__":
     data_processor = DataProcessing()
 
     # Read video file
-    video = cv2.VideoCapture('Assignment CPV\sample4.mp4')
+    video = cv2.VideoCapture('sample4.mp4')
 
     # Set the video frame width and height to 1280x720
     video.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
     video.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
     # Read the drop.txt to get list of features to drop
-    with open('Assignment CPV/m3_drop.txt', 'r') as file:
+    with open('m3_drop.txt', 'r') as file:
         features_drop_col = file.read().splitlines()
 
     # Read the gesture names from the csv file
-    gesturesdf = pd.read_csv('Assignment CPV/m3_gesture.csv')
+    gesturesdf = pd.read_csv('m3_gesture.csv')
     gestures = gesturesdf['name'].values.tolist()
     for i in range(len(gestures)):
         print(f"{i}: {gestures[i]}")

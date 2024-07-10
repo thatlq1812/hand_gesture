@@ -1,7 +1,7 @@
 from m3_module import *
 
 if __name__ == "__main__":
-    trainer = RandomForestTrainer(csv_file='Assignment CPV/m3_info.csv')
+    trainer = RandomForestTrainer(csv_file='m3_info.csv')
     trainer.preprocess_data(0.3) # Corr < 0.3 will be removed
     trainer.split_data(test_size=0.2, random_state=42)
     trainer.create_model(
@@ -13,5 +13,5 @@ if __name__ == "__main__":
         ip_bootstrap=True,
         ip_random_state=42
     )
-    trainer.train_model(save_location='Assignment CPV/m3_model.joblib')
+    trainer.train_model(save_location='m3_model.joblib')
     trainer.evaluate_model()

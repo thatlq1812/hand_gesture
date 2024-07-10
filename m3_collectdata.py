@@ -98,8 +98,3 @@ if __name__ == "__main__":
 
 # End of file, print the result
 print("The program has ended...")
-
-"""
-Tao làm tới cái cái thứ 6 - call me rồi nên bây rảnh thì input tiếp vào nhe
-
-"""

@@ -40,22 +40,13 @@ class MediaPipe:
         self.draw = mp.solutions.drawing_utils
     
     def process_image(self, image):
-        """
-        Process an image to detect hands and return the results.
-        
-        Parameters:
-        - image: numpy array, the input image in BGR format
-        
-        Returns:
-        - results: mediapipe solutions object containing hand landmarks and other information
-        """
         # Convert image to RGB format expected by MediaPipe
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         
         # Process image and get results
         self.results = self.hands.process(image_rgb)
         
-        return self.results
+        return self.results 
 
     def draw_landmarks(self, image):
         """
@@ -350,7 +341,7 @@ class DataSaver:
         data = [capture_person, label]
         data.extend(features)
 
-        with open(self.csv_file, mode='a', newline='') as file:
+        with open(self.csv_file, mode='a', newline='') as file: 
             writer = csv.writer(file)
             writer.writerow(data)
 

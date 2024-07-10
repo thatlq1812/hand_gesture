@@ -12,7 +12,7 @@ if __name__ == "__main__":
     text_color_1 = (0, 255, 255)
     
     # Create objects
-    hand_detector = MediaPipe(gl_static_image_mode, 10) # Set 1 hand to create dataset
+    hand_detector = MediaPipe(gl_static_image_mode, 10)
     cam = Camera(gl_cam_index, gl_cam_width, gl_cam_height, gl_cam_fps)
     data_processor = DataProcessing()
 

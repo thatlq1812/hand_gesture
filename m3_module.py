@@ -73,7 +73,7 @@ class MediaPipe:
             for hand_landmarks in self.results.multi_hand_landmarks:
                 # Draw landmarks on the image 
                 self.draw.draw_landmarks(image, hand_landmarks, mp.solutions.hands.HAND_CONNECTIONS, 
-                                         self.draw.DrawingSpec(color=(0, 0, 255), thickness=2, circle_radius=3),
+                                         self.draw.DrawingSpec(color=(255, 0, 0), thickness=2, circle_radius=3),
                                          self.draw.DrawingSpec(color=(0, 255, 0), thickness=2))
         return image
 

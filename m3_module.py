@@ -1,26 +1,33 @@
+# Link for github repository:
+# https://github.com/thatlq1812/hand_gesture
+
 # Import libraries
+import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import mediapipe as mp
-import csv
 import cv2
-import os
+import csv
+
 import getpass
 import warnings
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import classification_report
 from joblib import dump, load
 
-#Config:
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+#Config: Setup the global variables here
+
 # For MediaPipe
 gl_static_image_mode = False
 gl_max_num_hands = 2
 
 # For Camera
-gl_cam_index = 0
+gl_cam_index = 0 # IF YOU CANT SEE THE CAMERA, CHANGE THIS TO 1 OR HIGHER
 gl_cam_width = 1280
 gl_cam_height = 720
 gl_cam_fps = 30
@@ -28,7 +35,7 @@ gl_cam_fps = 30
 # For Data Processing
 gl_round_decimal = 6
 
-warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 
 # Class for MediaPipe
 class MediaPipe:
@@ -41,7 +48,7 @@ class MediaPipe:
     def process_image(self, image):
         # Convert image to RGB format expected by MediaPipe
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        
+
         # Process image and get results
         self.results = self.hands.process(image_rgb)
         
@@ -123,7 +130,7 @@ class MediaPipe:
         - image: numpy array, the input image with the bounding box drawn
         """
         min_x, min_y, max_x, max_y = minmax_xy
-        cv2.rectangle(image, (min_x, min_y), (max_x, max_y), (255, 255, 0), 1)
+        cv2.rectangle(image, (min_x-20, min_y-20), (max_x+20, max_y+20), (255, 255, 0), 1)
         return image
 
 # Class for Camera
@@ -352,7 +359,7 @@ class RandomForestTrainer:
         self.model = None
         self.all_columns = list(self.data.columns)
 
-    def preprocess_data(self,corr_threshold=0.3):
+    def preprocess_data(self):
         print(self.data.info())
         if self.data.isnull().sum().sum() > 0:
             self.data = self.data.dropna()
@@ -364,6 +371,8 @@ class RandomForestTrainer:
         X = self.data.drop('gesture', axis=1)
         y = self.data['gesture']
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+        # Print the shapes of the training and testing datasets
         print('Shape of X_train:', np.array(self.X_train).shape)
         print('Shape of X_test:', np.array(self.X_test).shape)
         print('Shape of y_train:', self.y_train.shape)
@@ -390,13 +399,3 @@ class RandomForestTrainer:
         print(self.X_test.info())
         print(classification_report(self.y_test, y_pred))
         print('Accuracy:', self.model.score(self.X_test, self.y_test))
-
-    def plot_feature_importances(self):
-        feature_importances = self.model.feature_importances_
-        sorted_idx = np.argsort(feature_importances)
-        plt.figure(figsize=(10, 6))
-        plt.barh(range(self.X_train.shape[1]), feature_importances[sorted_idx], align='center')
-        plt.yticks(range(self.X_train.shape[1]), [self.X_train.columns[i] for i in sorted_idx])
-        plt.xlabel('Feature Importance')
-        plt.title('Feature Importances')
-        plt.show()

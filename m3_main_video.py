@@ -6,7 +6,6 @@ if __name__ == "__main__":
     print("Program started...")
 
     lmmodel = load("m3_model.joblib")
-
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_scale = 1 # From 0 to 1
     text_color_1 = (255, 0, 255)
